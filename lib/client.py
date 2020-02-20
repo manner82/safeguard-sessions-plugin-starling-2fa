@@ -55,12 +55,13 @@ class Client(MFAClient):
 class StarlingClient(Client):
     API_URL = "https://2faclient{}.cloud.oneidentity.com"
 
-    def __init__(self, environment="prod", timeout=30, poll_interval=1, push_details=None, cache=None):
+    def __init__(self, environment="prod", timeout=30, poll_interval=1, push_details=None, cache=None, credential_string=None):
         super(StarlingClient, self).__init__(timeout=timeout, poll_interval=poll_interval, push_details=push_details)
         self.__cache = cache
         self.__user_doesnt_exist = None
+        join_client = StarlingJoinClient(environment, credential_string=credential_string)
         self.headers = {
-            "Authorization": "Bearer " + StarlingJoinClient(environment).get_starling_access_token(self.__cache)
+            "Authorization": "Bearer " + join_client.get_starling_access_token(self.__cache)
         }
         self.url = self.API_URL.format("" if environment == "prod" else "-" + environment)
 

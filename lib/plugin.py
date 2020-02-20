@@ -74,12 +74,14 @@ class Plugin(AAPlugin):
         timeout = self.plugin_configuration.getint("starling", "timeout", 60)
         rest_poll_interval = self.plugin_configuration.getint("starling", "rest_poll_interval", 1)
         push_details = self.create_push_details()
+        credential_string = self.plugin_configuration.get("starling", "credential_string")
         return StarlingClient(
             environment=self.plugin_configuration.get("starling", "environment", "prod"),
             timeout=timeout,
             poll_interval=rest_poll_interval,
             push_details=push_details,
             cache=self.__cache,
+            credential_string=credential_string
         )
 
     def create_push_details(self):

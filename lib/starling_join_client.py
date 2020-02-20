@@ -32,9 +32,10 @@ logger = get_logger(__name__)
 
 
 class StarlingJoinClient(object):
-    def __init__(self, environment="prod"):
+    def __init__(self, environment="prod", credential_string=None):
         self._environment = environment
         self._starling_join = None
+        self._credential_string = credential_string
 
     def get_starling_access_token(self, cache):
         cached_access_token = cache.get(CACHE_KEY)
@@ -65,7 +66,11 @@ class StarlingJoinClient(object):
     @property
     def credential_string(self):
         if self._starling_join is None:
-            self._starling_join = {"credential_string": BoxConfiguration.open().get_starling_join_credential_string()}
+            if not self._credential_string:
+                self._credential_string = BoxConfiguration.open().get_starling_join_credential_string()
+            self._starling_join = {"credential_string": self._credential_string}
+
         if self._starling_join["credential_string"] is None:
             raise RuntimeError("The node is not joined to Starling. Aborting.")
+
         return self._starling_join["credential_string"]
